@@ -117,7 +117,7 @@ export class App extends Component {
       <div>
         <GlobalStyle />
         <Searchbar onSubmit={handleFormSubmit} />
-        <ImageGallery photos={dataPhoto} openModal={openModal} />
+        {dataPhoto && <ImageGallery photos={dataPhoto} openModal={openModal} />}
         {isLoading && <Loader />}
         {showModal && (
           <Modal
