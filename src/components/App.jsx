@@ -12,7 +12,7 @@ import { Modal } from './Modal/Modal';
 
 export function App() {
   const [dataPhoto, setDataPhoto] = setState(null);
-  const [error, setError] = setState('');
+
   const [page, setPage] = setState(1);
   const [showModal, setShowModal] = setState(false);
   const [photoTag, setPhotoTag] = setState('');
@@ -40,14 +40,13 @@ export function App() {
       } else {
         setDataPhoto(prev => [...prev, ...data.hits]);
       }
-      setCurrentHits(NUM_REQUESTED_PHOTOS * this.state.pag);
+      setCurrentHits(NUM_REQUESTED_PHOTOS * page);
       setTotalHits(data.totalHits);
 
       if (data.hits.length === 0) {
         notificationTry();
       }
     } catch (error) {
-      setError(error.message);
       notificationCatch(error.message);
     } finally {
       setIsLoading(false);
@@ -65,8 +64,8 @@ export function App() {
   };
 
   const handleFormSubmit = photoTag => {
-    this.setState({ photoTag });
-    this.setState({ page: 1 });
+    setPhotoTag(photoTag);
+    setPage(1);
   };
 
   const handleLoadMore = () => {
