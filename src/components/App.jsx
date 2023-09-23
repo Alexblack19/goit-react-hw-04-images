@@ -11,65 +11,57 @@ import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
 
 export function App() {
-  const[dataPhoto, setDataPhoto]=setState(null);
-  const[error, setError]=setState('');
+  const [dataPhoto, setDataPhoto] = setState(null);
+  const [error, setError] = setState('');
+  const [page, setPage] = setState(1);
+  const [showModal, setShowModal] = setState(false);
+  const [photoTag, setPhotoTag] = setState('');
+  const [isLoading, setIsLoading] = setState(false);
+  const [currentLargeImageUrl, setCurrentLargeImageUrl] = setState('');
+  const [currentImageTags, setCurrentImageTags] = setState('');
+  const [currentHits, setCurrentHits] = setState(null);
+  const [totalHits, setTotalHits] = setState(null);
 
-  // state = {
-  //   dataPhoto: null,
-  //   error: '',
-  //   page: 1,
-  //   showModal: false,
-  //   photoTag: '',
-  //   isLoading: false,
-  //   currentLargeImageUrl: '',
-  //   currentImageTags: '',
-  //   currentHits: null,
-  //   totalHits: null,
-  // };
-
-  componentDidUpdate(_, prevState) {
-    const searchTag = this.state.photoTag;
-    if (prevState.photoTag !== searchTag) {
-      this.setState({ dataPhoto: null });
-      this.fetchPhoto(searchTag, this.state.page);
-    }
-  }
+  // componentDidUpdate(_, prevState) {
+  //   const searchTag = this.state.photoTag;
+  //   if (prevState.photoTag !== searchTag) {
+  //     this.setState({ dataPhoto: null });
+  //     this.fetchPhoto(searchTag, this.state.page);
+  //   }
+  // }
 
   const fetchPhoto = async (searchTag, page) => {
-    this.setState({ isLoading: true });
+    setIsLoading(true);
     try {
       const data = await getAllPhoto(searchTag, page);
 
-      if (!this.state.dataPhoto) {
-        this.setState({ dataPhoto: data.hits });
+      if (!dataPhoto) {
+        setDataPhoto(data.hits);
       } else {
-        this.setState({ dataPhoto: [...this.state.dataPhoto, ...data.hits] });
+        setDataPhoto(prev => [...prev, ...data.hits]);
       }
-
-      this.setState({ currentHits: NUM_REQUESTED_PHOTOS * this.state.page });
-      this.setState({ totalHits: data.totalHits });
+      setCurrentHits(NUM_REQUESTED_PHOTOS * this.state.pag);
+      setTotalHits(data.totalHits);
 
       if (data.hits.length === 0) {
         notificationTry();
       }
     } catch (error) {
-      this.setState({ error: error.message });
+      setError(error.message);
       notificationCatch(error.message);
     } finally {
-      this.setState({ isLoading: false });
+      setIsLoading(false);
     }
   };
 
   const openModal = e => {
-    const currentLargeImageUrl = e.target.dataset.large;
-    const currentImageTags = e.target.alt;
-
-    this.setState({ currentLargeImageUrl, currentImageTags });
+    setCurrentLargeImageUrl(e.target.dataset.large);
+    setCurrentImageTags(e.target.alt);
     toggleModal();
   };
 
   const toggleModal = () => {
-    this.setState(({ showModal }) => ({ showModal: !showModal }));
+    setShowModal(({ showModal }) => ({ showModal: !showModal }));
   };
 
   const handleFormSubmit = photoTag => {
@@ -78,9 +70,9 @@ export function App() {
   };
 
   const handleLoadMore = () => {
-    const page = this.state.page + 1;
-    this.setState({ page: page });
-    fetchPhoto(this.state.photoTag, page);
+    const nextPage = page + 1;
+    setPage(nextPage);
+    fetchPhoto(photoTag, nextPage);
   };
 
   function notificationTry() {
@@ -103,115 +95,114 @@ export function App() {
       width: '340px',
     });
   }
-// export class App extends Component {
-//   state = {
-//     dataPhoto: null,
-//     error: '',
-//     page: 1,
-//     showModal: false,
-//     photoTag: '',
-//     isLoading: false,
-//     currentLargeImageUrl: '',
-//     currentImageTags: '',
-//     currentHits: null,
-//     totalHits: null,
-//   };
+  // export class App extends Component {
+  //   state = {
+  //     dataPhoto: null,
+  //     error: '',
+  //     page: 1,
+  //     showModal: false,
+  //     photoTag: '',
+  //     isLoading: false,
+  //     currentLargeImageUrl: '',
+  //     currentImageTags: '',
+  //     currentHits: null,
+  //     totalHits: null,
+  //   };
 
-//   componentDidUpdate(_, prevState) {
-//     const searchTag = this.state.photoTag;
-//     if (prevState.photoTag !== searchTag) {
-//       this.setState({ dataPhoto: null });
-//       this.fetchPhoto(searchTag, this.state.page);
-//     }
-//   }
+  //   componentDidUpdate(_, prevState) {
+  //     const searchTag = this.state.photoTag;
+  //     if (prevState.photoTag !== searchTag) {
+  //       this.setState({ dataPhoto: null });
+  //       this.fetchPhoto(searchTag, this.state.page);
+  //     }
+  //   }
 
-//   fetchPhoto = async (searchTag, page) => {
-//     this.setState({ isLoading: true });
-//     try {
-//       const data = await getAllPhoto(searchTag, page);
+  //   fetchPhoto = async (searchTag, page) => {
+  //     this.setState({ isLoading: true });
+  //     try {
+  //       const data = await getAllPhoto(searchTag, page);
 
-//       if (!this.state.dataPhoto) {
-//         this.setState({ dataPhoto: data.hits });
-//       } else {
-//         this.setState({ dataPhoto: [...this.state.dataPhoto, ...data.hits] });
-//       }
+  //       if (!this.state.dataPhoto) {
+  //         this.setState({ dataPhoto: data.hits });
+  //       } else {
+  //         this.setState({ dataPhoto: [...this.state.dataPhoto, ...data.hits] });
+  //       }
 
-//       this.setState({ currentHits: NUM_REQUESTED_PHOTOS * this.state.page });
-//       this.setState({ totalHits: data.totalHits });
+  //       this.setState({ currentHits: NUM_REQUESTED_PHOTOS * this.state.page });
+  //       this.setState({ totalHits: data.totalHits });
 
-//       if (data.hits.length === 0) {
-//         this.notificationTry();
-//       }
-//     } catch (error) {
-//       this.setState({ error: error.message });
-//       this.notificationCatch(error.message);
-//     } finally {
-//       this.setState({ isLoading: false });
-//     }
-//   };
+  //       if (data.hits.length === 0) {
+  //         this.notificationTry();
+  //       }
+  //     } catch (error) {
+  //       this.setState({ error: error.message });
+  //       this.notificationCatch(error.message);
+  //     } finally {
+  //       this.setState({ isLoading: false });
+  //     }
+  //   };
 
-//   openModal = e => {
-//     const currentLargeImageUrl = e.target.dataset.large;
-//     const currentImageTags = e.target.alt;
+  //   openModal = e => {
+  //     const currentLargeImageUrl = e.target.dataset.large;
+  //     const currentImageTags = e.target.alt;
 
-//     this.setState({ currentLargeImageUrl, currentImageTags });
-//     this.toggleModal();
-//   };
+  //     this.setState({ currentLargeImageUrl, currentImageTags });
+  //     this.toggleModal();
+  //   };
 
-//   toggleModal = () => {
-//     this.setState(({ showModal }) => ({ showModal: !showModal }));
-//   };
+  //   toggleModal = () => {
+  //     this.setState(({ showModal }) => ({ showModal: !showModal }));
+  //   };
 
-//   handleFormSubmit = photoTag => {
-//     this.setState({ photoTag });
-//     this.setState({ page: 1 });
-//   };
+  //   handleFormSubmit = photoTag => {
+  //     this.setState({ photoTag });
+  //     this.setState({ page: 1 });
+  //   };
 
-//   handleLoadMore = () => {
-//     const page = this.state.page + 1;
-//     this.setState({ page: page });
-//     this.fetchPhoto(this.state.photoTag, page);
-//   };
+  //   handleLoadMore = () => {
+  //     const page = this.state.page + 1;
+  //     this.setState({ page: page });
+  //     this.fetchPhoto(this.state.photoTag, page);
+  //   };
 
-//   notificationTry() {
-//     Notiflix.Notify.warning(
-//       'Sorry, there are no images matching your search query. Please try again.',
-//       {
-//         position: 'center-center',
-//         fontSize: '18px',
-//         cssAnimationStyle: 'zoom',
-//         cssAnimationDuration: 1000,
-//         width: '380px',
-//       }
-//     );
-//   }
+  //   notificationTry() {
+  //     Notiflix.Notify.warning(
+  //       'Sorry, there are no images matching your search query. Please try again.',
+  //       {
+  //         position: 'center-center',
+  //         fontSize: '18px',
+  //         cssAnimationStyle: 'zoom',
+  //         cssAnimationDuration: 1000,
+  //         width: '380px',
+  //       }
+  //     );
+  //   }
 
-//   notificationCatch(error) {
-//     Notiflix.Notify.warning(error, {
-//       position: 'center-center',
-//       fontSize: '16px',
-//       width: '340px',
-//     });
-//   }
+  //   notificationCatch(error) {
+  //     Notiflix.Notify.warning(error, {
+  //       position: 'center-center',
+  //       fontSize: '16px',
+  //       width: '340px',
+  //     });
+  //   }
 
-      return (
-      <div>
-        <GlobalStyle />
-        <Searchbar onSubmit={handleFormSubmit} />
-        {dataPhoto && <ImageGallery photos={dataPhoto} openModal={openModal} />}
-        {isLoading && <Loader />}
-        {showModal && (
-          <Modal
-            imageUrl={currentLargeImageUrl}
-            imageTags={currentImageTags}
-            onClose={toggleModal}
-          />
-        )}
-        {dataPhoto && currentHits <= totalHits && (
-          <Button handleLoadMore={handleLoadMore} />
-        )}
-        <ToastContainer autoClose={3000} />
-      </div>)
-    
-  }
-
+  return (
+    <div>
+      <GlobalStyle />
+      <Searchbar onSubmit={handleFormSubmit} />
+      {dataPhoto && <ImageGallery photos={dataPhoto} openModal={openModal} />}
+      {isLoading && <Loader />}
+      {showModal && (
+        <Modal
+          imageUrl={currentLargeImageUrl}
+          imageTags={currentImageTags}
+          onClose={toggleModal}
+        />
+      )}
+      {dataPhoto && currentHits <= totalHits && (
+        <Button handleLoadMore={handleLoadMore} />
+      )}
+      <ToastContainer autoClose={3000} />
+    </div>
+  );
+}
