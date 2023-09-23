@@ -4,7 +4,7 @@ import Notiflix from 'notiflix';
 import { Component } from 'react';
 import { GlobalStyle } from './GlobalStyle';
 import { Searchbar } from './Searchbar/Searchbar';
-import { getAllPhoto, numRequestedPhotos } from '../api/image-api';
+import { getAllPhoto, NUM_REQUESTED_PHOTOS } from '../api/image-api';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
 import { Loader } from './Loader/Loader';
@@ -43,7 +43,7 @@ export class App extends Component {
         this.setState({ dataPhoto: [...this.state.dataPhoto, ...data.hits] });
       }
 
-      this.setState({ currentHits: numRequestedPhotos * this.state.page });
+      this.setState({ currentHits: NUM_REQUESTED_PHOTOS * this.state.page });
       this.setState({ totalHits: data.totalHits });
 
       if (data.hits.length === 0) {
