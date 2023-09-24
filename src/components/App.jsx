@@ -21,10 +21,10 @@ export function App() {
   const [currentHits, setCurrentHits] = useState(null);
   const [totalHits, setTotalHits] = useState(null);
 
-  const fetchPhoto = useCallback(async (searchTag, page) => {
+  const fetchPhoto = useCallback(async () => {
     setIsLoading(true);
     try {
-      const data = await getAllPhoto(searchTag, page);
+      const data = await getAllPhoto(photoTag, page);
       setDataPhoto(prevDataPhoto => [...prevDataPhoto, ...data.hits]);
       setCurrentHits(NUM_REQUESTED_PHOTOS * page);
       setTotalHits(data.totalHits);
@@ -36,23 +36,21 @@ export function App() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [photoTag, page]);
 
   useEffect(() => {
     if (!photoTag) return;
-    fetchPhoto(photoTag, page);
-    setDataPhoto([]);
-  }, [photoTag]);
+    fetchPhoto();
+  }, [photoTag, fetchPhoto]);
 
   const handleFormSubmit = photoTag => {
     setPhotoTag(photoTag);
     setPage(1);
+    setDataPhoto([]);
   };
 
   const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchPhoto(photoTag, nextPage);
+    setPage(prevPage => prevPage + 1);
   };
 
   function notificationTry() {
