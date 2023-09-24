@@ -21,34 +21,40 @@ export function App() {
   const [currentHits, setCurrentHits] = useState(null);
   const [totalHits, setTotalHits] = useState(null);
 
+  const fetchPhoto = useCallback(
+    async (searchTag, page) => {
+      setIsLoading(true);
+      try {
+        const data = await getAllPhoto(searchTag, page);
+
+        if (!dataPhoto) {
+          setDataPhoto(data.hits);
+        } else {
+          setDataPhoto([...dataPhoto, ...data.hits]);
+        }
+        setCurrentHits(NUM_REQUESTED_PHOTOS * page);
+        setTotalHits(data.totalHits);
+
+        if (data.hits.length === 0) {
+          notificationTry();
+        }
+      } catch (error) {
+        notificationCatch(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+      setCurrentHits(NUM_REQUESTED_PHOTOS * page);
+    },
+    [dataPhoto]
+  );
+
   useEffect(() => {
     if (!photoTag) return;
     fetchPhoto(photoTag, page);
-  });
-
-  const fetchPhoto = useCallback(async (searchTag, page) => {
-    setIsLoading(true);
-    try {
-      const data = await getAllPhoto(searchTag, page);
-
-      if (!dataPhoto) {
-        setDataPhoto(data.hits);
-      } else {
-        setDataPhoto(prev => [...prev, ...data.hits]);
-      }
-      setCurrentHits(NUM_REQUESTED_PHOTOS * page);
-      setTotalHits(data.totalHits);
-
-      if (data.hits.length === 0) {
-        notificationTry();
-      }
-    } catch (error) {
-      notificationCatch(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-    setCurrentHits(NUM_REQUESTED_PHOTOS * page);
-  });
+    return () => {
+      setDataPhoto(null);
+    };
+  }, [photoTag]);
 
   const openModal = e => {
     setCurrentLargeImageUrl(e.target.dataset.large);
