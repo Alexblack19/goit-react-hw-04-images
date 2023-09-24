@@ -1,7 +1,7 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Notiflix from 'notiflix';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { GlobalStyle } from './GlobalStyle';
 import { Searchbar } from './Searchbar/Searchbar';
 import { getAllPhoto, NUM_REQUESTED_PHOTOS } from '../api/image-api';
@@ -23,11 +23,10 @@ export function App() {
 
   useEffect(() => {
     if (!photoTag) return;
-    // setPhotoTag(null);
     fetchPhoto(photoTag, page);
   });
 
-  const fetchPhoto = async (searchTag, page) => {
+  const fetchPhoto = useCallback(async (searchTag, page) => {
     setIsLoading(true);
     try {
       const data = await getAllPhoto(searchTag, page);
@@ -49,7 +48,7 @@ export function App() {
       setIsLoading(false);
     }
     setCurrentHits(NUM_REQUESTED_PHOTOS * page);
-  };
+  });
 
   const openModal = e => {
     setCurrentLargeImageUrl(e.target.dataset.large);
