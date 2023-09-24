@@ -25,13 +25,10 @@ export function App() {
     setIsLoading(true);
     try {
       const data = await getAllPhoto(searchTag, page);
-
       setDataPhoto(prevDataPhoto => [...prevDataPhoto, ...data.hits]);
-
       setCurrentHits(NUM_REQUESTED_PHOTOS * page);
       setTotalHits(data.totalHits);
-
-      if (data.hits.length === 0) {
+      if (!data.hits.length) {
         notificationTry();
       }
     } catch (error) {
