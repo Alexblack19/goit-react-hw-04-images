@@ -11,7 +11,7 @@ export const getAllPhoto = async (photoTag, page) => {
       key: `${API_KEY}`,
       q: `${photoTag.toLowerCase()}`,
       safesearch: true,
-      // image_type: 'photo',
+      image_type: 'photo',
       // orientation: 'horizontal',
       page: page,
       per_page: `${NUM_REQUESTED_PHOTOS}`,
