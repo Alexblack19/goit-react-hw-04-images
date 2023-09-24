@@ -1,7 +1,7 @@
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Notiflix from 'notiflix';
-import { setState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { GlobalStyle } from './GlobalStyle';
 import { Searchbar } from './Searchbar/Searchbar';
 import { getAllPhoto, NUM_REQUESTED_PHOTOS } from '../api/image-api';
@@ -11,45 +11,45 @@ import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
 
 export function App() {
-  const [dataPhoto, setDataPhoto] = setState(null);
-  const [page, setPage] = setState(1);
-  const [showModal, setShowModal] = setState(false);
-  const [photoTag, setPhotoTag] = setState('');
-  const [isLoading, setIsLoading] = setState(false);
-  const [currentLargeImageUrl, setCurrentLargeImageUrl] = setState('');
-  const [currentImageTags, setCurrentImageTags] = setState('');
-  const [currentHits, setCurrentHits] = setState(null);
-  const [totalHits, setTotalHits] = setState(null);
+  const [dataPhoto, setDataPhoto] = useState(null);
+  const [page, setPage] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [photoTag, setPhotoTag] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentLargeImageUrl, setCurrentLargeImageUrl] = useState('');
+  const [currentImageTags, setCurrentImageTags] = useState('');
+  const [currentHits, setCurrentHits] = useState(null);
+  const [totalHits, setTotalHits] = useState(null);
 
   useEffect(() => {
-    const fetchPhoto = async (searchTag, page) => {
-      setIsLoading(true);
-      try {
-        const data = await getAllPhoto(searchTag, page);
-
-        if (!dataPhoto) {
-          setDataPhoto(data.hits);
-        } else {
-          setDataPhoto(prev => [...prev, ...data.hits]);
-        }
-        setCurrentHits(NUM_REQUESTED_PHOTOS * page);
-        setTotalHits(data.totalHits);
-
-        if (data.hits.length === 0) {
-          notificationTry();
-        }
-      } catch (error) {
-        notificationCatch(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-      setCurrentHits(NUM_REQUESTED_PHOTOS * page);
-    };
-
     if (!photoTag) return;
-    setPhotoTag(null);
+    // setPhotoTag(null);
     fetchPhoto(photoTag, page);
   });
+
+  const fetchPhoto = async (searchTag, page) => {
+    setIsLoading(true);
+    try {
+      const data = await getAllPhoto(searchTag, page);
+
+      if (!dataPhoto) {
+        setDataPhoto(data.hits);
+      } else {
+        setDataPhoto(prev => [...prev, ...data.hits]);
+      }
+      setCurrentHits(NUM_REQUESTED_PHOTOS * page);
+      setTotalHits(data.totalHits);
+
+      if (data.hits.length === 0) {
+        notificationTry();
+      }
+    } catch (error) {
+      notificationCatch(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+    setCurrentHits(NUM_REQUESTED_PHOTOS * page);
+  };
 
   const openModal = e => {
     setCurrentLargeImageUrl(e.target.dataset.large);
@@ -67,30 +67,6 @@ export function App() {
   };
 
   const handleLoadMore = () => {
-    const fetchPhoto = async (searchTag, page) => {
-      setIsLoading(true);
-      try {
-        const data = await getAllPhoto(searchTag, page);
-
-        if (!dataPhoto) {
-          setDataPhoto(data.hits);
-        } else {
-          setDataPhoto(prev => [...prev, ...data.hits]);
-        }
-        setCurrentHits(NUM_REQUESTED_PHOTOS * page);
-        setTotalHits(data.totalHits);
-
-        if (data.hits.length === 0) {
-          notificationTry();
-        }
-      } catch (error) {
-        notificationCatch(error.message);
-      } finally {
-        setIsLoading(false);
-      }
-      setCurrentHits(NUM_REQUESTED_PHOTOS * page);
-    };
-
     const nextPage = page + 1;
     setPage(nextPage);
     fetchPhoto(photoTag, nextPage);
