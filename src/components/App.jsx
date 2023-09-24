@@ -51,8 +51,8 @@ export function App() {
   useEffect(() => {
     if (!photoTag) return;
     fetchPhoto(photoTag, page);
-    setDataPhoto(null);
-  }, [photoTag]);
+    // setDataPhoto(null);
+  }, [photoTag, page, fetchPhoto]);
 
   const openModal = e => {
     setCurrentLargeImageUrl(e.target.dataset.large);
@@ -60,7 +60,7 @@ export function App() {
     toggleModal();
   };
 
-  const toggleModal = () => {    
+  const toggleModal = () => {
     setShowModal(!showModal);
   };
 
