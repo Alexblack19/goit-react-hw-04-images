@@ -30,7 +30,7 @@ export function App() {
         if (!dataPhoto) {
           setDataPhoto(data.hits);
         } else {
-          setDataPhoto([...dataPhoto, ...data.hits]);
+          setDataPhoto(prevDataPhoto => [...prevDataPhoto, ...data.hits]);
         }
         setCurrentHits(NUM_REQUESTED_PHOTOS * page);
         setTotalHits(data.totalHits);
@@ -43,7 +43,6 @@ export function App() {
       } finally {
         setIsLoading(false);
       }
-      setCurrentHits(NUM_REQUESTED_PHOTOS * page);
     },
     [dataPhoto]
   );
@@ -51,8 +50,8 @@ export function App() {
   useEffect(() => {
     if (!photoTag) return;
     fetchPhoto(photoTag, page);
-    // setDataPhoto(null);
-  }, [photoTag, page, fetchPhoto]);
+   
+  }, [photoTag]);
 
   const openModal = e => {
     setCurrentLargeImageUrl(e.target.dataset.large);
@@ -67,6 +66,7 @@ export function App() {
   const handleFormSubmit = photoTag => {
     setPhotoTag(photoTag);
     setPage(1);
+    setDataPhoto(null);
   };
 
   const handleLoadMore = () => {
