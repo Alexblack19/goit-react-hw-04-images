@@ -11,7 +11,7 @@ import { Loader } from './Loader/Loader';
 import { Modal } from './Modal/Modal';
 
 export function App() {
-  const [dataPhoto, setDataPhoto] = useState('');
+  const [dataPhoto, setDataPhoto] = useState([]);
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [photoTag, setPhotoTag] = useState('');
@@ -41,7 +41,7 @@ export function App() {
   useEffect(() => {
     if (!photoTag) return;
     fetchPhoto(photoTag, page);
-    setDataPhoto('');
+    setDataPhoto([]);
   }, [photoTag]);
 
   const handleFormSubmit = photoTag => {
@@ -90,7 +90,9 @@ export function App() {
     <div>
       <GlobalStyle />
       <Searchbar onSubmit={handleFormSubmit} />
-      {dataPhoto && <ImageGallery photos={dataPhoto} openModal={openModal} />}
+      {dataPhoto.length > 0 && (
+        <ImageGallery photos={dataPhoto} openModal={openModal} />
+      )}
       {isLoading && <Loader />}
       {showModal && (
         <Modal
@@ -99,7 +101,7 @@ export function App() {
           onClose={toggleModal}
         />
       )}
-      {dataPhoto && currentHits <= totalHits && (
+      {dataPhoto.length > 0 && currentHits <= totalHits && (
         <Button handleLoadMore={handleLoadMore} />
       )}
       <ToastContainer autoClose={3000} />
