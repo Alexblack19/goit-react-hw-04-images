@@ -51,9 +51,7 @@ export function App() {
   useEffect(() => {
     if (!photoTag) return;
     fetchPhoto(photoTag, page);
-    return () => {
-      setDataPhoto(null);
-    };
+    setDataPhoto(null);
   }, [photoTag]);
 
   const openModal = e => {
