@@ -60,8 +60,8 @@ export function App() {
     toggleModal();
   };
 
-  const toggleModal = () => {
-    setShowModal(({ showModal }) => ({ showModal: !showModal }));
+  const toggleModal = () => {    
+    setShowModal(!showModal);
   };
 
   const handleFormSubmit = photoTag => {
