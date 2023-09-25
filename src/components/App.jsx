@@ -43,6 +43,17 @@ export function App() {
     fetchPhoto();
   }, [photoTag, fetchPhoto]);
 
+  useEffect(() => {
+    if (page === 1) return;
+    function smoothScrollGallery() {
+      window.scrollBy({
+        top: window.innerHeight * 0.9,
+        behavior: 'smooth',
+      });
+    }
+    smoothScrollGallery();
+  }, [dataPhoto, page]);
+
   const handleFormSubmit = photoTag => {
     setPhotoTag(photoTag);
     setPage(1);
